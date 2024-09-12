@@ -30,7 +30,7 @@ const Comment = sequelize.define('Comment', {
         allowNull: false
     }
 }, {
-    timestamps: true, // Esto añade `createdAt`
+    timestamps: false, // Esto no añade `createdAt`
     tableName: 'comments'
 });
 

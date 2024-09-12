@@ -4,6 +4,7 @@ const sequelize = require('./src/config/bd'); // Importa la configuración de la
 const ticketRoutes = require('./src/routes/TicketRoutes'); // Importa tus rutas si las tienes en un archivo separado
 const userRoutes = require('./src/routes/UserRoutes');
 const commentRoutes = require('./src/routes/CommentRoutes');
+const cors = require('cors');
 
 
 // Crea una instancia de Express
@@ -12,6 +13,13 @@ const app = express();
 // Middleware
 app.use(bodyParser.json()); // Para analizar JSON en las solicitudes
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(cors({
+  origin: '*', // Permite cualquier origen
+  methods: 'GET,POST,PUT,DELETE',
+  credentials: true,
+}));
+app.use(express.json());
 
 // Rutas
 app.use('/api', ticketRoutes); 

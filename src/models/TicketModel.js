@@ -35,7 +35,7 @@ const Ticket = sequelize.define('Ticket', {
         defaultValue: 'pendiente'
     }
 }, {
-    timestamps: true, // Esto añade `createdAt` y `updatedAt`
+    timestamps: false, // no añade `createdAt` y `updatedAt`
     tableName: 'tickets'
 });
 
