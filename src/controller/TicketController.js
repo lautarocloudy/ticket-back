@@ -101,3 +101,21 @@ exports.deleteTicket = async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar el ticket' });
   }
 };
+
+// Obtener todos los tickets de un usuario específico
+exports.getTicketsByUserId = async (req, res) => {
+  const { userId } = req.params; // El ID del usuario del cual queremos obtener los tickets
+
+  try {
+    // Buscar todos los tickets asociados con el userId proporcionado
+    const tickets = await Ticket.findAll({ where: { user_id: userId } });
+
+    if (tickets.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron tickets para el usuario' });
+    }
+
+    res.status(200).json(tickets);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener los tickets del usuario' });
+  }
+};
