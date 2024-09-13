@@ -19,7 +19,11 @@ const User = sequelize.define('User', {
     password: {
         type: DataTypes.STRING,
         allowNull: false
-    }
+    },
+    rol: {
+        type: DataTypes.ENUM('admin', 'ticket', 'user'), 
+        defaultValue: 'user',                  
+      },
 }, {
     timestamps: false, // no añadir `createdAt` y `updatedAt`
     tableName: 'users'

@@ -5,12 +5,12 @@ const bcrypt = require('bcryptjs');
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, rol } = req.body;
 
         // Encriptar la contraseña
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = await User.create({ name, email, password: hashedPassword });
+        const newUser = await User.create({ name, email, password: hashedPassword, rol });
         res.status(201).json(newUser);
     } catch (error) {
         console.error('Error al crear el usuario:', error);
@@ -47,8 +47,8 @@ exports.getUserById = async (req, res) => {
 // Actualizar un usuario por ID
 exports.updateUser = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
-        const [updated] = await User.update({ name, email, password }, {
+        const { name, email, password, rol } = req.body;
+        const [updated] = await User.update({ name, email, password, rol }, {
             where: { id: req.params.id }
         });
         if (updated) {
