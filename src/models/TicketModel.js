@@ -40,3 +40,7 @@ const Ticket = sequelize.define('Ticket', {
 });
 
 module.exports = Ticket;
+
+// Definir las asociaciones
+User.hasMany(Ticket, { foreignKey: 'user_id', as: 'tickets' });
+Ticket.belongsTo(User, { foreignKey: 'user_id', as: 'user' });

@@ -3,14 +3,32 @@ const User = require('../models/UserModel');
 const { getGifForDifficulty } = require('../utils/GiphyService');
 
 // Obtener todos los tickets
+// exports.getAllTickets = async (req, res) => {
+//   try {
+//     const tickets = await Ticket.findAll();
+//     res.status(200).json(tickets);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Error al obtener los tickets' });
+//   }
+// };
+
 exports.getAllTickets = async (req, res) => {
   try {
-    const tickets = await Ticket.findAll();
+    const tickets = await Ticket.findAll({
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['name'] // Selecciona los campos que quieres incluir del usuario
+        }
+      ]
+    });
     res.status(200).json(tickets);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener los tickets' });
   }
 };
+
 
 // Crear un ticket nuevo
 exports.createTicket = async (req, res) => {
@@ -103,12 +121,35 @@ exports.deleteTicket = async (req, res) => {
 };
 
 // Obtener todos los tickets de un usuario específico
+// exports.getTicketsByUserId = async (req, res) => {
+//   const { userId } = req.params; // El ID del usuario del cual queremos obtener los tickets
+
+//   try {
+//     // Buscar todos los tickets asociados con el userId proporcionado
+//     const tickets = await Ticket.findAll({ where: { user_id: userId } });
+
+//     if (tickets.length === 0) {
+//       return res.status(404).json({ message: 'No se encontraron tickets para el usuario' });
+//     }
+
+//     res.status(200).json(tickets);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Error al obtener los tickets del usuario' });
+//   }
+// };
 exports.getTicketsByUserId = async (req, res) => {
   const { userId } = req.params; // El ID del usuario del cual queremos obtener los tickets
 
   try {
     // Buscar todos los tickets asociados con el userId proporcionado
-    const tickets = await Ticket.findAll({ where: { user_id: userId } });
+    const tickets = await Ticket.findAll({
+      where: { user_id: userId },
+      include: [{
+        model: User,
+        as: 'user', // Debe coincidir con el alias en la definición de relación
+        attributes: ['name'] // Especifica los atributos que quieres incluir
+      }]
+    });
 
     if (tickets.length === 0) {
       return res.status(404).json({ message: 'No se encontraron tickets para el usuario' });
