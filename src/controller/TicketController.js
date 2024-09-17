@@ -2,27 +2,46 @@ const Ticket = require('../models/TicketModel'); // Modelo de Sequelize para los
 const User = require('../models/UserModel');
 const { getGifForDifficulty } = require('../utils/GiphyService');
 
-// Obtener todos los tickets
-// exports.getAllTickets = async (req, res) => {
-//   try {
-//     const tickets = await Ticket.findAll();
-//     res.status(200).json(tickets);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error al obtener los tickets' });
-//   }
-// };
-
 exports.getAllTickets = async (req, res) => {
   try {
+    const { status, startDate, endDate, difficulty } = req.query;
+
+    // Construir condiciones de filtrado
+    const whereConditions = {};
+
+    // Filtrar por estado (pendiente o completado)
+    if (status) {
+      whereConditions.status = status;
+    }
+
+    // Filtrar por fecha (rango de fechas)
+    if (startDate || endDate) {
+      whereConditions.created_at = {};
+      if (startDate) {
+        whereConditions.created_at[Op.gte] = new Date(startDate); // Desde
+      }
+      if (endDate) {
+        whereConditions.created_at[Op.lte] = new Date(endDate); // Hasta
+      }
+    }
+
+    // Filtrar por nivel de dificultad
+    if (difficulty) {
+      whereConditions.difficulty = difficulty;
+    }
+
+    // Consultar los tickets con las condiciones de filtrado
     const tickets = await Ticket.findAll({
+      where: whereConditions,
       include: [
         {
           model: User,
           as: 'user',
-          attributes: ['name'] // Selecciona los campos que quieres incluir del usuario
+          attributes: ['name'] // Incluye solo el nombre del usuario
         }
       ]
     });
+
     res.status(200).json(tickets);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener los tickets' });
@@ -120,35 +139,48 @@ exports.deleteTicket = async (req, res) => {
   }
 };
 
-// Obtener todos los tickets de un usuario específico
-// exports.getTicketsByUserId = async (req, res) => {
-//   const { userId } = req.params; // El ID del usuario del cual queremos obtener los tickets
 
-//   try {
-//     // Buscar todos los tickets asociados con el userId proporcionado
-//     const tickets = await Ticket.findAll({ where: { user_id: userId } });
-
-//     if (tickets.length === 0) {
-//       return res.status(404).json({ message: 'No se encontraron tickets para el usuario' });
-//     }
-
-//     res.status(200).json(tickets);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error al obtener los tickets del usuario' });
-//   }
-// };
 exports.getTicketsByUserId = async (req, res) => {
   const { userId } = req.params; // El ID del usuario del cual queremos obtener los tickets
+  const { status, startDate, endDate, difficulty } = req.query; // Parámetros de filtro
 
   try {
-    // Buscar todos los tickets asociados con el userId proporcionado
+    // Construir condiciones de filtrado
+    const whereConditions = {
+      user_id: userId // Asegura que solo se buscan tickets para el usuario específico
+    };
+
+    // Filtrar por estado (pendiente o completado)
+    if (status) {
+      whereConditions.status = status;
+    }
+
+    // Filtrar por fecha (rango de fechas)
+    if (startDate || endDate) {
+      whereConditions.created_at = {};
+      if (startDate) {
+        whereConditions.created_at[Op.gte] = new Date(startDate); // Desde
+      }
+      if (endDate) {
+        whereConditions.created_at[Op.lte] = new Date(endDate); // Hasta
+      }
+    }
+
+    // Filtrar por nivel de dificultad
+    if (difficulty) {
+      whereConditions.difficulty = difficulty;
+    }
+
+    // Buscar los tickets con las condiciones de filtrado
     const tickets = await Ticket.findAll({
-      where: { user_id: userId },
-      include: [{
-        model: User,
-        as: 'user', // Debe coincidir con el alias en la definición de relación
-        attributes: ['name'] // Especifica los atributos que quieres incluir
-      }]
+      where: whereConditions,
+      include: [
+        {
+          model: User,
+          as: 'user', // Debe coincidir con el alias en la definición de relación
+          attributes: ['name'] // Incluye solo el nombre del usuario
+        }
+      ]
     });
 
     if (tickets.length === 0) {
