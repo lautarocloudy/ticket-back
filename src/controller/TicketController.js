@@ -51,7 +51,7 @@ exports.getAllTickets = async (req, res) => {
 
 // Crear un ticket nuevo
 exports.createTicket = async (req, res) => {
-  const { name, description, difficulty, user_id } = req.body;
+  const { name, description, difficulty, user_id, status } = req.body;
 
   try {
     // Validar si el user_id proporcionado existe
@@ -69,7 +69,7 @@ exports.createTicket = async (req, res) => {
       description,
       difficulty,
       gif_url: gifUrl,  // Guardamos la URL del gif en el campo correspondiente
-      status: 'pendiente',
+      status: status || 'pendiente',
       user_id  // Asociar el ticket al usuario proporcionado
     });
 

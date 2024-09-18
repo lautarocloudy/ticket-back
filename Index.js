@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const sequelize = require('./src/config/bd'); // Importa la configuración de la base de datos
 const ticketRoutes = require('./src/routes/TicketRoutes'); // Importa tus rutas si las tienes en un archivo separado
 const userRoutes = require('./src/routes/UserRoutes');
-const commentRoutes = require('./src/routes/CommentRoutes');
 const cors = require('cors');
 
 
@@ -24,7 +23,6 @@ app.use(express.json());
 // Rutas
 app.use('/api', ticketRoutes); 
 app.use('/api', userRoutes);
-app.use('/api', commentRoutes)
 
 // Prueba de conexión a la base de datos
 sequelize.authenticate()
