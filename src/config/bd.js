@@ -1,9 +1,10 @@
 const { Sequelize } = require('sequelize');
 
 // Configura tu conexión a la base de datos
-const sequelize = new Sequelize('tickets', 'root', '', {
-    host: 'localhost',
-    dialect: 'mysql',
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+    port: process.env.DB_PORT,
     logging: false // Para desactivar los logs de Sequelize si no los necesitas
 });
 

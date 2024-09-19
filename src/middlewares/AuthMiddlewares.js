@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = 'tu_clave_secreta'; // Debe ser la misma que usaste para firmar el token
+// const JWT_SECRET = 'tu_clave_secreta'; 
 
 // Middleware para verificar el JWT
 const authMiddleware = (req, res, next) => {
@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
     } catch (error) {

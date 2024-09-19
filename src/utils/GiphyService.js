@@ -1,12 +1,12 @@
 const axios = require('axios');
 
 async function getGifForDifficulty(difficulty) {
-    const GIPHY_API_KEY = 'RLto3NGqXdAPQwyvHc1MlRQx7MqbBm4N'; 
+    // const GIPHY_API_KEY = 'RLto3NGqXdAPQwyvHc1MlRQx7MqbBm4N'; 
     try {
         // Hacemos una solicitud GET a la API de Giphy para buscar gifs basados en la dificultad
-        const response = await axios.get(`https://api.giphy.com/v1/gifs/search`, {
+        const response = await axios.get(process.env.GIPHY_API, {
             params: {
-                api_key: GIPHY_API_KEY,
+                api_key: process.env.GIPHY_API_KEY,
                 q: difficulty,  // Buscar gifs con la palabra clave basada en la dificultad
                 limit: 10       // Limitar la búsqueda a 10 gifs para elegir uno al azar
             }
