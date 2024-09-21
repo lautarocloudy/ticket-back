@@ -81,7 +81,7 @@ exports.deleteUser = async (req, res) => {
 };
 
 const JWT_SECRET = 'tu_clave_secreta'; // Cambia esto por una clave secreta más segura
-
+const REFRESH_TOKEN_SECRET = "tu_clace_refresh"
 // Login y generación de JWT
 exports.login = async (req, res) => {
     try {
@@ -100,11 +100,30 @@ exports.login = async (req, res) => {
         }
 
         // Generar el JWT
-        const token = jwt.sign({ id: user.id, email: user.email, rol: user.rol }, JWT_SECRET, { expiresIn: '1h' });
+        const accessToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '2h' }); // Acceso por 2 horas
+        const refreshToken = jwt.sign({ id: user.id }, REFRESH_TOKEN_SECRET, { expiresIn: '1d' }); // Refresh por 1 hora
 
-        res.status(200).json({ token });
+        res.status(200).json({ accessToken, refreshToken });
     } catch (error) {
         console.error('Error al iniciar sesión:', error);
         res.status(500).json({ message: 'Error al iniciar sesión' });
     }
 };
+exports.refreshToken = async (req, res) => {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+        return res.status(403).json({ message: 'Refresh token es requerido' });
+    }
+
+    // Verificar el refresh token
+    jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ message: 'Refresh token inválido' });
+
+        // Generar un nuevo access token
+        const newAccessToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+
+        res.json({ accessToken: newAccessToken });
+    });
+};
+
