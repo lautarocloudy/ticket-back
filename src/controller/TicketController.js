@@ -2,53 +2,6 @@ const Ticket = require('../models/TicketModel'); // Modelo de Sequelize para los
 const User = require('../models/UserModel');
 const { getGifForDifficulty } = require('../utils/GiphyService');
 
-exports.getAllTickets = async (req, res) => {
-  try {
-    const { status, startDate, endDate, difficulty } = req.query;
-
-    // Construir condiciones de filtrado
-    const whereConditions = {};
-
-    // Filtrar por estado (pendiente o completado)
-    if (status) {
-      whereConditions.status = status;
-    }
-
-    // Filtrar por fecha (rango de fechas)
-    if (startDate || endDate) {
-      whereConditions.created_at = {};
-      if (startDate) {
-        whereConditions.created_at[Op.gte] = new Date(startDate); // Desde
-      }
-      if (endDate) {
-        whereConditions.created_at[Op.lte] = new Date(endDate); // Hasta
-      }
-    }
-
-    // Filtrar por nivel de dificultad
-    if (difficulty) {
-      whereConditions.difficulty = difficulty;
-    }
-
-    // Consultar los tickets con las condiciones de filtrado
-    const tickets = await Ticket.findAll({
-      where: whereConditions,
-      include: [
-        {
-          model: User,
-          as: 'user',
-          attributes: ['name'] // Incluye solo el nombre del usuario
-        }
-      ]
-    });
-
-    res.status(200).json(tickets);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al obtener los tickets' });
-  }
-};
-
-
 // Crear un ticket nuevo
 exports.createTicket = async (req, res) => {
   const { name, description, difficulty, user_id, status } = req.body;
@@ -68,9 +21,9 @@ exports.createTicket = async (req, res) => {
       name,
       description,
       difficulty,
-      gif_url: gifUrl,  // Guardamos la URL del gif en el campo correspondiente
+      gif_url: gifUrl,  
       status: status || 'pendiente',
-      user_id  // Asociar el ticket al usuario proporcionado
+      user_id  
     });
 
     res.status(201).json(newTicket);
@@ -111,13 +64,13 @@ exports.updateTicket = async (req, res) => {
     ticket.description = description || ticket.description;
     ticket.difficulty = difficulty || ticket.difficulty;
     ticket.status = status || ticket.status;
-    ticket.gif_url = gifUrl; // Actualizar el gif si es necesario
-    ticket.user_id = user_id || ticket.user_id; // Actualizar el user_id si se proporciona
+    ticket.gif_url = gifUrl; 
+    ticket.user_id = user_id || ticket.user_id; 
 
     // Guardar los cambios en la base de datos
     await ticket.save();
 
-    res.status(200).json(ticket); // Devolver el ticket actualizado
+    res.status(200).json(ticket); 
   } catch (error) {
     res.status(500).json({ message: 'Error al actualizar el ticket', error: error.message });
   }
@@ -139,15 +92,15 @@ exports.deleteTicket = async (req, res) => {
   }
 };
 
-
+// Buscar Ticket
 exports.getTicketsByUserId = async (req, res) => {
-  const { userId } = req.params; // El ID del usuario del cual queremos obtener los tickets
-  const { status, difficulty, sort } = req.query; // Parámetros de filtro
+  const { userId } = req.params; 
+  const { status, difficulty, sort } = req.query; 
 
   try {
     // Construir condiciones de filtrado
     const whereConditions = {
-      user_id: userId // Asegura que solo se buscan tickets para el usuario específico
+      user_id: userId 
     };
 
     // Filtrar por estado (pendiente o completado)
@@ -171,12 +124,12 @@ exports.getTicketsByUserId = async (req, res) => {
     // Buscar los tickets con las condiciones de filtrado
     const tickets = await Ticket.findAll({
       where: whereConditions,
-      order: orderOptions, // Añadir ordenamiento
+      order: orderOptions, 
       include: [
         {
           model: User,
-          as: 'user', // Debe coincidir con el alias en la definición de relación
-          attributes: ['name'] // Incluye solo el nombre del usuario
+          as: 'user', 
+          attributes: ['name']
         }
       ]
     });
