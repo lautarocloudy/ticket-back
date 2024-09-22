@@ -21,7 +21,6 @@ async function getGifForDifficulty(difficulty) {
             throw new Error('No se encontraron gifs para esta dificultad');
         }
     } catch (error) {
-        console.error('Error al obtener el gif:', error);
         throw new Error('Error al obtener el gif de Giphy');
     }
 }

@@ -13,7 +13,6 @@ exports.createUser = async (req, res) => {
         const newUser = await User.create({ name, email, password: hashedPassword });
         res.status(201).json(newUser);
     } catch (error) {
-        console.error('Error al crear el usuario:', error);
         res.status(500).json({ message: 'Error al crear el usuario' });
     }
 };
@@ -24,7 +23,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(process.env.JWT_SECRET)
         // Buscar al usuario por email
         const user = await User.findOne({ where: { email } });
         if (!user) {
@@ -38,12 +36,10 @@ exports.login = async (req, res) => {
         }
 
         // Generar el JWT
-        console.log(process.env.JWT_SECRET)
         const accessToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '2h' }); // Acceso por 2 horas
 
         res.status(200).json({ accessToken });
     } catch (error) {
-        console.error('Error al iniciar sesión:', error);
         res.status(500).json({ message: 'Error al iniciar sesión' });
     }
 };
