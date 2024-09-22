@@ -20,12 +20,8 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    rol: {
-        type: DataTypes.ENUM('admin', 'ticket', 'user'), 
-        defaultValue: 'user',                  
-      },
 }, {
-    timestamps: false, // no añadir `createdAt` y `updatedAt`
+    timestamps: false, 
     tableName: 'users'
 });
 

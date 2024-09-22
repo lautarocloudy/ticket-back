@@ -142,7 +142,7 @@ exports.deleteTicket = async (req, res) => {
 
 exports.getTicketsByUserId = async (req, res) => {
   const { userId } = req.params; // El ID del usuario del cual queremos obtener los tickets
-  const { status, startDate, endDate, difficulty } = req.query; // Parámetros de filtro
+  const { status, difficulty, sort } = req.query; // Parámetros de filtro
 
   try {
     // Construir condiciones de filtrado
@@ -155,25 +155,23 @@ exports.getTicketsByUserId = async (req, res) => {
       whereConditions.status = status;
     }
 
-    // Filtrar por fecha (rango de fechas)
-    if (startDate || endDate) {
-      whereConditions.created_at = {};
-      if (startDate) {
-        whereConditions.created_at[Op.gte] = new Date(startDate); // Desde
-      }
-      if (endDate) {
-        whereConditions.created_at[Op.lte] = new Date(endDate); // Hasta
-      }
-    }
-
     // Filtrar por nivel de dificultad
     if (difficulty) {
       whereConditions.difficulty = difficulty;
     }
 
+    // Configurar opciones de ordenamiento
+    const orderOptions = [];
+    if (sort === 'asc') {
+      orderOptions.push(['created_at', 'ASC']); // Del más viejo al más nuevo
+    } else if (sort === 'desc') {
+      orderOptions.push(['created_at', 'DESC']); // Del más nuevo al más viejo
+    }
+
     // Buscar los tickets con las condiciones de filtrado
     const tickets = await Ticket.findAll({
       where: whereConditions,
+      order: orderOptions, // Añadir ordenamiento
       include: [
         {
           model: User,

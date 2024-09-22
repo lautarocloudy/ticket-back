@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {
     try {
-        const { name, email, password, rol } = req.body;
+        const { name, email, password } = req.body;
 
         // Encriptar la contraseña
         const hashedPassword = await bcrypt.hash(password, 10);
